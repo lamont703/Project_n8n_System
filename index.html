@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n8n Client Onboarding Workflow - Prototype</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Landing Page Screen -->
+    <div id="landing-screen" class="screen active">
+        <div class="container">
+            <div class="header">
+                <h1>Transform Your Ideas Into Reality</h1>
+                <p>Get started with our AI-powered development process</p>
+            </div>
+
+            <div class="landing-container">
+                <div class="landing-hero">
+                    <h2>Ready to Build Something Amazing?</h2>
+                    <p>Choose how you'd like to get started - our AI will help capture your project details and schedule
+                        your discovery call.</p>
+                </div>
+
+                <div class="contact-options">
+                    <div class="contact-option" onclick="selectContactMethod('text')">
+                        <div class="option-icon">
+                            <div class="icon-text">💬</div>
+                        </div>
+                        <h3>Text with AI</h3>
+                        <p>Chat with our AI assistant to share your project details and schedule your call</p>
+                        <button class="btn-secondary">Start Text Chat</button>
+                    </div>
+
+                    <div class="contact-option" onclick="selectContactMethod('voice')">
+                        <div class="option-icon">
+                            <div class="icon-voice">🎙️</div>
+                        </div>
+                        <h3>Voice AI Call</h3>
+                        <p>Speak directly with our ElevenLabs AI agent for a natural conversation</p>
+                        <button class="btn-secondary">Start Voice Call</button>
+                    </div>
+                </div>
+
+                <div class="landing-features">
+                    <div class="feature">
+                        <span class="feature-icon">⚡</span>
+                        <span>AI-Powered Process</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">📅</span>
+                        <span>Instant Scheduling</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🚀</span>
+                        <span>Fast Turnaround</span>
+                    </div>
+                </div>
+
+                <div class="developer-docs-link">
+                    <a href="README.md" target="_blank" class="docs-link">
+                        <span class="docs-icon">📖</span>
+                        View Developer Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Interaction Screen -->
+    <div id="ai-interaction-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <h1 id="ai-header">Chat with Our AI Assistant</h1>
+                <p id="ai-subheader">Tell us about your project and we'll help you get started</p>
+            </div>
+
+            <div class="ai-container">
+                <div class="ai-chat-box" id="ai-chat-box">
+                    <div class="ai-message">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <p>Hi! I'm here to help you get started with your project. First, let me get your contact
+                                information so we can keep in touch.</p>
+                        </div>
+                    </div>
+
+                    <div class="ai-message">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <p>What's your name and email address?</p>
+                        </div>
+                    </div>
+
+                    <div class="user-message">
+                        <div class="message-content">
+                            <p>Hi! I'm <span id="demo-name">John Doe</span> and my email is <span
+                                    id="demo-email">john@example.com</span></p>
+                        </div>
+                        <div class="message-avatar">👤</div>
+                    </div>
+
+                    <div class="ai-message">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <p>Perfect! I've captured your information in our system. Now, tell me about your project -
+                                what are you looking to build?</p>
+                        </div>
+                    </div>
+
+                    <div class="user-message">
+                        <div class="message-content">
+                            <p id="demo-project">I need an e-commerce platform with inventory management, customer
+                                accounts, and payment processing.</p>
+                        </div>
+                        <div class="message-avatar">👤</div>
+                    </div>
+
+                    <div class="ai-message">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <p>Excellent! That sounds like a comprehensive project. I'd love to schedule a discovery
+                                call with our team to dive deeper into your requirements. What time works best for you?
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="user-message">
+                        <div class="message-content">
+                            <p>Tomorrow at 2 PM would be perfect.</p>
+                        </div>
+                        <div class="message-avatar">👤</div>
+                    </div>
+
+                    <div class="ai-message">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <p>Great! I've scheduled your discovery call for tomorrow at 2 PM. You'll receive a calendar
+                                invite shortly. After our call, we'll automatically set up your project workspace and
+                                send you a preview. Is there anything else you'd like to know?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-actions">
+                    <button class="btn-primary" onclick="completeAIInteraction()">Continue to Post-Call Process</button>
+                    <button class="btn-secondary" onclick="showScreen('landing-screen')">Back to Landing</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lamont Notification Screen -->
+    <div id="lamont-notification-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <h1>Designer Notification Sent</h1>
+                <p>Lamont has been notified and will contact you shortly</p>
+            </div>
+
+            <div class="notification-container">
+                <div class="notification-status">
+                    <div class="notification-icon">
+                        <div class="icon-notification">📱</div>
+                    </div>
+                    <h3>Lamont Notified Successfully</h3>
+                    <p>Our designer has been automatically notified via:</p>
+
+                    <div class="notification-methods">
+                        <div class="method">
+                            <span class="method-icon">📧</span>
+                            <span>Email notification sent</span>
+                        </div>
+                        <div class="method">
+                            <span class="method-icon">💬</span>
+                            <span>SMS alert sent</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="client-info-box">
+                    <h3>Your Information Sent to Lamont</h3>
+                    <div class="info-item">
+                        <span class="label">Client Name:</span>
+                        <span id="lamont-client-name">John Doe</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Email:</span>
+                        <span id="lamont-client-email">john@example.com</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Project Type:</span>
+                        <span id="lamont-project-type">E-commerce Platform</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">AI Interaction:</span>
+                        <span class="status-completed">Completed</span>
+                    </div>
+                </div>
+
+                <div class="next-steps-box">
+                    <h3>What Happens Next</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot active"></div>
+                            <div class="timeline-content">
+                                <h4>Lamont Contacts You</h4>
+                                <p>Our designer will reach out within 1-2 hours to schedule your Zoom discovery call</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h4>Zoom Discovery Call</h4>
+                                <p>Detailed discussion about your project with automatic transcription</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h4>Automated Analysis</h4>
+                                <p>ChatGPT analyzes the call and creates your wireframe prototype</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="simulateZoomCall()">Simulate Zoom Call Process</button>
+        </div>
+    </div>
+
+    <!-- Zoom Call Screen -->
+    <div id="zoom-call-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <h1>Zoom Discovery Call with Lamont</h1>
+                <p>Automatic transcription and analysis in progress</p>
+            </div>
+
+            <div class="zoom-container">
+                <div class="zoom-interface">
+                    <div class="zoom-header">
+                        <div class="zoom-title">Discovery Call - John Doe Project</div>
+                        <div class="zoom-time">45:32</div>
+                    </div>
+
+                    <div class="zoom-participants">
+                        <div class="participant">
+                            <div class="participant-video">
+                                <div class="participant-avatar">L</div>
+                                <div class="participant-name">Lamont (Designer)</div>
+                            </div>
+                        </div>
+                        <div class="participant">
+                            <div class="participant-video">
+                                <div class="participant-avatar">J</div>
+                                <div class="participant-name">John Doe</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="zoom-status">
+                        <div class="status-indicator recording">🔴 Recording</div>
+                        <div class="status-indicator transcribing">📝 Transcribing</div>
+                    </div>
+                </div>
+
+                <div class="transcription-preview">
+                    <h3>Live Transcription</h3>
+                    <div class="transcript-content">
+                        <div class="transcript-line">
+                            <span class="speaker">Lamont:</span>
+                            <span class="text">Thanks for joining today, John. I've reviewed the information from your
+                                AI interaction. Let's dive deeper into your e-commerce platform requirements.</span>
+                        </div>
+                        <div class="transcript-line">
+                            <span class="speaker">John:</span>
+                            <span class="text">Perfect! I'm looking to build something that can handle inventory
+                                management, multiple payment methods, and customer accounts with order history.</span>
+                        </div>
+                        <div class="transcript-line">
+                            <span class="speaker">Lamont:</span>
+                            <span class="text">Excellent. What's your target audience and expected traffic volume? This
+                                will help us determine the right architecture.</span>
+                        </div>
+                        <div class="transcript-line">
+                            <span class="speaker">John:</span>
+                            <span class="text">We're targeting small to medium businesses, expecting around 10,000
+                                visitors per month initially, with plans to scale.</span>
+                        </div>
+                        <div class="transcript-line typing">
+                            <span class="speaker">Lamont:</span>
+                            <span class="text">Great, and for the admin dashboard, what specific features do you need
+                                for managing...</span>
+                            <span class="cursor">|</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="completeZoomCall()">Complete Call & Start Analysis</button>
+        </div>
+    </div>
+
+    <!-- ChatGPT Analysis Screen -->
+    <div id="chatgpt-analysis-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <h1>ChatGPT Analysis in Progress</h1>
+                <p>AI is analyzing the call transcription and creating your wireframe</p>
+            </div>
+
+            <div class="analysis-container">
+                <div class="analysis-steps">
+                    <div class="analysis-step active" id="analysis-step-1">
+                        <div class="step-icon">🎯</div>
+                        <h3>Analyzing Requirements</h3>
+                        <p>Processing 45 minutes of call transcription...</p>
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-step active" id="analysis-step-2">
+                        <div class="step-icon">📝</div>
+                        <h3>Creating Wireframes</h3>
+                        <p>Generating layout structure and user flow...</p>
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" style="width: 85%"></div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-step processing" id="analysis-step-3">
+                        <div class="step-icon">🎨</div>
+                        <h3>Building Prototype</h3>
+                        <p>Creating interactive HTML screens...</p>
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" style="width: 60%"></div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-step" id="analysis-step-4">
+                        <div class="step-icon">🤖</div>
+                        <h3>Cursor AI Prompt</h3>
+                        <p>Generating development prompts...</p>
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-output">
+                    <h3>Analysis Results</h3>
+                    <div class="output-section">
+                        <h4>Key Requirements Identified:</h4>
+                        <ul>
+                            <li>E-commerce platform with inventory management</li>
+                            <li>Multi-payment gateway integration</li>
+                            <li>Customer account system with order history</li>
+                            <li>Admin dashboard for business management</li>
+                            <li>Responsive design for mobile and desktop</li>
+                            <li>SEO optimization for search visibility</li>
+                        </ul>
+                    </div>
+
+                    <div class="output-section">
+                        <h4>Wireframe Components:</h4>
+                        <div class="wireframe-components">
+                            <div class="component">📄 Landing Page</div>
+                            <div class="component">🛍️ Product Catalog</div>
+                            <div class="component">🛒 Shopping Cart</div>
+                            <div class="component">👤 User Dashboard</div>
+                            <div class="component">⚙️ Admin Panel</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="startCursorDevelopment()">Continue to Development</button>
+        </div>
+    </div>
+
+    <!-- Automation Progress Screen -->
+    <div id="progress-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <h1>Processing Your Project</h1>
+                <p>Our automated workflow is setting up your development environment</p>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+
+                <div class="steps">
+                    <div class="step" id="step-1">
+                        <div class="step-icon">
+                            <div class="icon-chatgpt"></div>
+                        </div>
+                        <h3>ChatGPT Analysis</h3>
+                        <p>Analyzing call transcription</p>
+                        <div class="status" id="status-1">Pending</div>
+                    </div>
+
+                    <div class="step" id="step-2">
+                        <div class="step-icon">
+                            <div class="icon-wireframe"></div>
+                        </div>
+                        <h3>Wireframe Creation</h3>
+                        <p>Generating interactive prototype</p>
+                        <div class="status" id="status-2">Pending</div>
+                    </div>
+
+                    <div class="step" id="step-3">
+                        <div class="step-icon">
+                            <div class="icon-cursor"></div>
+                        </div>
+                        <h3>Cursor AI Coding</h3>
+                        <p>Converting to production code</p>
+                        <div class="status" id="status-3">Pending</div>
+                    </div>
+
+                    <div class="step" id="step-4">
+                        <div class="step-icon">
+                            <div class="icon-github"></div>
+                        </div>
+                        <h3>GitHub Deployment</h3>
+                        <p>Push to repository & Pages</p>
+                        <div class="status" id="status-4">Pending</div>
+                    </div>
+
+                    <div class="step" id="step-5">
+                        <div class="step-icon">
+                            <div class="icon-lamont"></div>
+                        </div>
+                        <h3>Lamont Notification</h3>
+                        <p>Sending live link via SMS/Email</p>
+                        <div class="status" id="status-5">Pending</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wireframe Preview Screen -->
+    <div id="preview-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <h1>Wireframe Generated</h1>
+                <p>Here's the initial wireframe created by Lamont Evans</p>
+            </div>
+
+            <div class="preview-container">
+                <div class="preview-header">
+                    <div class="preview-tabs">
+                        <button class="tab active" data-tab="desktop">Desktop</button>
+                        <button class="tab" data-tab="mobile">Mobile</button>
+                    </div>
+                    <div class="preview-actions">
+                        <button class="btn-secondary" onclick="showScreen('github-pages-screen')">View GitHub
+                            Pages</button>
+                        <button class="btn-secondary" onclick="showScreen('dashboard-screen')">Developer
+                            Dashboard</button>
+                    </div>
+                </div>
+
+                <div class="preview-frame" id="desktop-preview">
+                    <div class="wireframe-content">
+                        <header class="wireframe-header">
+                            <div class="logo">Your Logo</div>
+                            <nav class="nav">
+                                <a href="#" class="nav-link">Home</a>
+                                <a href="#" class="nav-link">About</a>
+                                <a href="#" class="nav-link">Services</a>
+                                <a href="#" class="nav-link">Contact</a>
+                            </nav>
+                        </header>
+
+                        <main class="wireframe-main">
+                            <section class="hero">
+                                <h1>Welcome to Your Project</h1>
+                                <p>This is your generated wireframe based on the project description</p>
+                                <button class="wireframe-btn">Get Started</button>
+                            </section>
+
+                            <section class="features">
+                                <div class="feature-card">
+                                    <h3>Feature 1</h3>
+                                    <p>Description of the first key feature</p>
+                                </div>
+                                <div class="feature-card">
+                                    <h3>Feature 2</h3>
+                                    <p>Description of the second key feature</p>
+                                </div>
+                                <div class="feature-card">
+                                    <h3>Feature 3</h3>
+                                    <p>Description of the third key feature</p>
+                                </div>
+                            </section>
+                        </main>
+                    </div>
+                </div>
+
+                <div class="preview-frame mobile-preview" id="mobile-preview">
+                    <div class="wireframe-content mobile">
+                        <header class="wireframe-header mobile">
+                            <div class="logo">Logo</div>
+                            <button class="menu-toggle">☰</button>
+                        </header>
+
+                        <main class="wireframe-main mobile">
+                            <section class="hero mobile">
+                                <h1>Your Project</h1>
+                                <p>Mobile-optimized wireframe</p>
+                                <button class="wireframe-btn">Get Started</button>
+                            </section>
+
+                            <section class="features mobile">
+                                <div class="feature-card mobile">
+                                    <h3>Feature 1</h3>
+                                    <p>Mobile feature description</p>
+                                </div>
+                                <div class="feature-card mobile">
+                                    <h3>Feature 2</h3>
+                                    <p>Mobile feature description</p>
+                                </div>
+                            </section>
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Preview Screen -->
+    <div id="email-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <h1>Confirmation Email</h1>
+                <p>This email will be sent to your client</p>
+            </div>
+
+            <div class="email-container">
+                <div class="email-preview">
+                    <div class="email-header">
+                        <div class="email-field">
+                            <label>From:</label>
+                            <span>development@yourcompany.com</span>
+                        </div>
+                        <div class="email-field">
+                            <label>To:</label>
+                            <span id="client-email-display">client@example.com</span>
+                        </div>
+                        <div class="email-field">
+                            <label>Subject:</label>
+                            <span>Your Project is Ready for Review 🚀</span>
+                        </div>
+                    </div>
+
+                    <div class="email-body">
+                        <h2>Hello <span id="client-name-display">John</span>!</h2>
+
+                        <p>Great news! We've completed the initial setup for your project. Here's what we've
+                            accomplished:</p>
+
+                        <div class="email-checklist">
+                            <div class="checklist-item">
+                                <span class="check">✓</span>
+                                <span>Project folder created in Google Drive</span>
+                            </div>
+                            <div class="checklist-item">
+                                <span class="check">✓</span>
+                                <span>Initial wireframe generated using AI</span>
+                            </div>
+                            <div class="checklist-item">
+                                <span class="check">✓</span>
+                                <span>GitHub repository set up</span>
+                            </div>
+                            <div class="checklist-item">
+                                <span class="check">✓</span>
+                                <span>Live preview hosted on GitHub Pages</span>
+                            </div>
+                        </div>
+
+                        <div class="email-cta">
+                            <p><strong>View your project preview:</strong></p>
+                            <a href="#" class="email-link">https://yourcompany.github.io/project-preview</a>
+                        </div>
+
+                        <p>Next steps:</p>
+                        <ul>
+                            <li>Review the wireframe and provide feedback</li>
+                            <li>Schedule a follow-up call to discuss refinements</li>
+                            <li>Approve the design for development</li>
+                        </ul>
+
+                        <p>Best regards,<br>Your Development Team</p>
+                    </div>
+                </div>
+
+                <div class="email-actions">
+                    <button class="btn-secondary" onclick="showScreen('preview-screen')">Back to Preview</button>
+                    <button class="btn-primary" onclick="showScreen('github-pages-screen')">View GitHub Pages</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GitHub Pages Screen -->
+    <div id="github-pages-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <h1>GitHub Pages Deployment</h1>
+                <p>Your project is now live on the web!</p>
+            </div>
+
+            <div class="github-pages-container">
+                <div class="deployment-status">
+                    <div class="status-icon">
+                        <div class="icon-success">✅</div>
+                    </div>
+                    <h3>Deployment Successful!</h3>
+                    <p>Your project has been successfully deployed to GitHub Pages</p>
+                </div>
+
+                <div class="deployment-details">
+                    <div class="detail-item">
+                        <span class="label">Repository:</span>
+                        <span class="value">yourcompany/john-doe-ecommerce</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Branch:</span>
+                        <span class="value">main</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Build Status:</span>
+                        <span class="status-success">✅ Successful</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Deploy Time:</span>
+                        <span class="value">2 minutes ago</span>
+                    </div>
+                </div>
+
+                <div class="live-link-section">
+                    <h3>🚀 Live Project Link</h3>
+                    <div class="live-link-box">
+                        <span class="live-link-label">Your project is live at:</span>
+                        <a href="#" class="live-link"
+                            target="_blank">https://yourcompany.github.io/john-doe-ecommerce</a>
+                        <button class="btn-copy" onclick="copyLiveLink()">Copy Link</button>
+                    </div>
+                </div>
+
+                <div class="github-features">
+                    <h3>GitHub Features Enabled</h3>
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <span class="feature-emoji">🌐</span>
+                            <span>Custom Domain Ready</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-emoji">🔒</span>
+                            <span>HTTPS Enabled</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-emoji">📱</span>
+                            <span>Mobile Responsive</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-emoji">⚡</span>
+                            <span>Fast Loading</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="sendLinkToLamont()">Send Link to Lamont</button>
+        </div>
+    </div>
+
+    <!-- Final Lamont Notification Screen -->
+    <div id="lamont-final-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <h1>Lamont Notified - Project Complete!</h1>
+                <p>Live project link has been sent to Lamont via SMS and email</p>
+            </div>
+
+            <div class="final-notification-container">
+                <div class="completion-status">
+                    <div class="completion-icon">
+                        <div class="icon-complete">🎉</div>
+                    </div>
+                    <h3>Workflow Complete!</h3>
+                    <p>Your entire project has been processed and delivered</p>
+                </div>
+
+                <div class="notification-summary">
+                    <h3>Notifications Sent to Lamont</h3>
+                    <div class="notification-item">
+                        <span class="notification-type">📱 SMS</span>
+                        <span class="notification-content">
+                            "John Doe's e-commerce project is live! Check it out:
+                            https://yourcompany.github.io/john-doe-ecommerce"
+                        </span>
+                        <span class="notification-status">✅ Delivered</span>
+                    </div>
+                    <div class="notification-item">
+                        <span class="notification-type">📧 Email</span>
+                        <span class="notification-content">
+                            "Project Complete: John Doe E-commerce Platform" - Full project details and live link
+                            included
+                        </span>
+                        <span class="notification-status">✅ Delivered</span>
+                    </div>
+                </div>
+
+                <div class="project-summary">
+                    <h3>Project Overview</h3>
+                    <div class="summary-stats">
+                        <div class="stat">
+                            <span class="stat-label">Total Time:</span>
+                            <span class="stat-value">2 hours 15 minutes</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">AI Interactions:</span>
+                            <span class="stat-value">3 (Voice AI, ChatGPT, Cursor)</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Automation Steps:</span>
+                            <span class="stat-value">10 completed</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Client Satisfaction:</span>
+                            <span class="stat-value">🌟 Excellent</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-complete">
+                    <h3>✅ Complete Workflow Summary</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step completed">
+                            <span class="step-number">1</span>
+                            <span class="step-text">Voice AI interaction captured client details</span>
+                        </div>
+                        <div class="workflow-step completed">
+                            <span class="step-number">2</span>
+                            <span class="step-text">Lamont notified and scheduled Zoom call</span>
+                        </div>
+                        <div class="workflow-step completed">
+                            <span class="step-number">3</span>
+                            <span class="step-text">Zoom call completed with transcription</span>
+                        </div>
+                        <div class="workflow-step completed">
+                            <span class="step-number">4</span>
+                            <span class="step-text">ChatGPT analyzed requirements and created wireframe</span>
+                        </div>
+                        <div class="workflow-step completed">
+                            <span class="step-number">5</span>
+                            <span class="step-text">Cursor AI generated production code</span>
+                        </div>
+                        <div class="workflow-step completed">
+                            <span class="step-number">6</span>
+                            <span class="step-text">Project deployed to GitHub Pages</span>
+                        </div>
+                        <div class="workflow-step completed">
+                            <span class="step-number">7</span>
+                            <span class="step-text">Live link sent to Lamont via SMS & email</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="final-actions">
+                <button class="btn-secondary" onclick="showScreen('dashboard-screen')">View Dashboard</button>
+                <button class="btn-primary" onclick="resetWorkflow()">Start New Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Developer Dashboard Screen -->
+    <div id="dashboard-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <h1>Developer Dashboard</h1>
+                <p>Monitor client pipeline and automation status</p>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Active Projects</h3>
+                        <div class="stat-number">12</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Completed Today</h3>
+                        <div class="stat-number">3</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Success Rate</h3>
+                        <div class="stat-number">98%</div>
+                    </div>
+                </div>
+
+                <div class="client-table">
+                    <h3>Recent Client Onboarding</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Project</th>
+                                <th>Status</th>
+                                <th>GitHub</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="client-info">
+                                        <span class="client-name" id="dashboard-client-name">John Doe</span>
+                                        <span class="client-email" id="dashboard-client-email">john@example.com</span>
+                                    </div>
+                                </td>
+                                <td>E-commerce Platform</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td><a href="#" class="github-link">View Repo</a></td>
+                                <td>
+                                    <button class="btn-small">Edit</button>
+                                    <button class="btn-small">Resend</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="client-info">
+                                        <span class="client-name">Sarah Johnson</span>
+                                        <span class="client-email">sarah@company.com</span>
+                                    </div>
+                                </td>
+                                <td>Portfolio Website</td>
+                                <td><span class="status-badge processing">Processing</span></td>
+                                <td><a href="#" class="github-link">View Repo</a></td>
+                                <td>
+                                    <button class="btn-small">Edit</button>
+                                    <button class="btn-small">Resend</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="client-info">
+                                        <span class="client-name">Mike Chen</span>
+                                        <span class="client-email">mike@startup.io</span>
+                                    </div>
+                                </td>
+                                <td>SaaS Dashboard</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><a href="#" class="github-link">View Repo</a></td>
+                                <td>
+                                    <button class="btn-small">Edit</button>
+                                    <button class="btn-small">Resend</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="dashboard-actions">
+                    <button class="btn-secondary" onclick="showScreen('landing-screen')">New Client</button>
+                    <button class="btn-primary" onclick="exportData()">Export Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
