@@ -1,0 +1,715 @@
+{
+  "name": "Client Onboarding Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "client-onboarding",
+        "options": {
+          "responseMode": "responseNode"
+        }
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "client-onboarding-webhook"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "folderName",
+              "value": "={{ $json.clientName }}_{{ $json.projectName }}"
+            },
+            {
+              "name": "repoName",
+              "value": "client-prototypes"
+            },
+            {
+              "name": "branchName",
+              "value": "main"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ new Date().toISOString() }}"
+            },
+            {
+              "name": "executionId",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        }
+      },
+      "id": "prepare-data",
+      "name": "Prepare Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "create",
+        "additionalFields": {
+          "firstName": "={{ $json.clientName }}",
+          "email": "={{ $json.clientEmail }}",
+          "phone": "={{ $json.clientPhone }}",
+          "customField": {
+            "projectName": "={{ $json.projectName }}",
+            "projectDescription": "={{ $json.projectDescription }}"
+          }
+        }
+      },
+      "id": "create-contact",
+      "name": "Create GoHighLevel Contact",
+      "type": "n8n-nodes-base.goHighLevel",
+      "typeVersion": 1,
+      "position": [680, 200],
+      "credentials": {
+        "goHighLevelApi": {
+          "id": "your-gohighlevel-credential-id",
+          "name": "GoHighLevel API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "pipeline",
+        "operation": "addToPipeline",
+        "contactId": "={{ $node['Create GoHighLevel Contact'].json.id }}",
+        "pipelineId": "your-pipeline-id",
+        "stageId": "prototype-in-progress-stage-id"
+      },
+      "id": "add-to-pipeline",
+      "name": "Add to Pipeline",
+      "type": "n8n-nodes-base.goHighLevel",
+      "typeVersion": 1,
+      "position": [900, 200],
+      "credentials": {
+        "goHighLevelApi": {
+          "id": "your-gohighlevel-credential-id",
+          "name": "GoHighLevel API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "create",
+        "name": "={{ $node['Prepare Data'].json.folderName }}",
+        "parents": ["your-google-drive-folder-id"],
+        "mimeType": "application/vnd.google-apps.folder"
+      },
+      "id": "create-project-folder",
+      "name": "Create Google Drive Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [680, 400],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "your-google-drive-credential-id",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "create",
+        "name": "project-brief.md",
+        "parents": "={{ $node['Create Google Drive Folder'].json.id }}",
+        "binaryData": true,
+        "binaryPropertyName": "data"
+      },
+      "id": "create-project-brief",
+      "name": "Create Project Brief",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [900, 400],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "your-google-drive-credential-id",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "url": "https://cursor.sh/api/generate-wireframe",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.CURSOR_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "projectDescription",
+              "value": "={{ $json.projectDescription }}"
+            },
+            {
+              "name": "clientName",
+              "value": "={{ $json.clientName }}"
+            },
+            {
+              "name": "projectName",
+              "value": "={{ $json.projectName }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "generate-wireframe",
+      "name": "Generate Cursor.sh Wireframe",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 600]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "wireframeHtml",
+              "value": "={{ $json.html || $json.wireframe || '<!-- Default HTML template -->' }}"
+            },
+            {
+              "name": "wireframeCss",
+              "value": "={{ $json.css || '/* Default CSS */' }}"
+            },
+            {
+              "name": "wireframeJs",
+              "value": "={{ $json.js || '// Default JavaScript' }}"
+            },
+            {
+              "name": "generationSuccess",
+              "value": "={{ $json.success !== false }}"
+            }
+          ]
+        }
+      },
+      "id": "process-wireframe",
+      "name": "Process Wireframe",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [900, 600]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-wireframe-success",
+              "leftValue": "={{ $node['Process Wireframe'].json.generationSuccess }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "check-wireframe-success",
+      "name": "Check Wireframe Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1120, 600]
+    },
+    {
+      "parameters": {
+        "resource": "repository",
+        "operation": "createBranch",
+        "repository": "={{ $node['Prepare Data'].json.repoName }}",
+        "branchName": "={{ $node['Prepare Data'].json.folderName }}",
+        "sourceBranch": "main"
+      },
+      "id": "create-github-branch",
+      "name": "Create GitHub Branch",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [1340, 500],
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "your-github-credential-id",
+          "name": "GitHub OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "create",
+        "repository": "={{ $node['Prepare Data'].json.repoName }}",
+        "branch": "={{ $node['Prepare Data'].json.folderName }}",
+        "filePath": "={{ $node['Prepare Data'].json.folderName }}/index.html",
+        "content": "={{ $node['Process Wireframe'].json.wireframeHtml }}"
+      },
+      "id": "create-html-file",
+      "name": "Create HTML File",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [1560, 400],
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "your-github-credential-id",
+          "name": "GitHub OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "create",
+        "repository": "={{ $node['Prepare Data'].json.repoName }}",
+        "branch": "={{ $node['Prepare Data'].json.folderName }}",
+        "filePath": "={{ $node['Prepare Data'].json.folderName }}/styles.css",
+        "content": "={{ $node['Process Wireframe'].json.wireframeCss }}"
+      },
+      "id": "create-css-file",
+      "name": "Create CSS File",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [1560, 500],
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "your-github-credential-id",
+          "name": "GitHub OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "create",
+        "repository": "={{ $node['Prepare Data'].json.repoName }}",
+        "branch": "={{ $node['Prepare Data'].json.folderName }}",
+        "filePath": "={{ $node['Prepare Data'].json.folderName }}/script.js",
+        "content": "={{ $node['Process Wireframe'].json.wireframeJs }}"
+      },
+      "id": "create-js-file",
+      "name": "Create JS File",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [1560, 600],
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "your-github-credential-id",
+          "name": "GitHub OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "pullRequest",
+        "operation": "create",
+        "repository": "={{ $node['Prepare Data'].json.repoName }}",
+        "title": "Add prototype for {{ $json.clientName }} - {{ $json.projectName }}",
+        "body": "Automated prototype generation for {{ $json.clientName }}\n\nProject: {{ $json.projectName }}\nGenerated at: {{ $node['Prepare Data'].json.timestamp }}",
+        "headBranch": "={{ $node['Prepare Data'].json.folderName }}",
+        "baseBranch": "main"
+      },
+      "id": "create-pull-request",
+      "name": "Create Pull Request",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [1780, 500],
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "your-github-credential-id",
+          "name": "GitHub OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "publicUrl",
+              "value": "https://{{ $env.GITHUB_USERNAME }}.github.io/{{ $node['Prepare Data'].json.repoName }}/{{ $node['Prepare Data'].json.folderName }}"
+            },
+            {
+              "name": "deploymentTime",
+              "value": "={{ new Date().toISOString() }}"
+            },
+            {
+              "name": "totalExecutionTime",
+              "value": "={{ new Date() - new Date($execution.startedAt) }}"
+            }
+          ]
+        }
+      },
+      "id": "generate-public-url",
+      "name": "Generate Public URL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2000, 500]
+    },
+    {
+      "parameters": {
+        "resource": "email",
+        "operation": "send",
+        "contactId": "={{ $node['Create GoHighLevel Contact'].json.id }}",
+        "templateId": "your-email-template-id",
+        "additionalFields": {
+          "variables": {
+            "clientName": "={{ $json.clientName }}",
+            "projectName": "={{ $json.projectName }}",
+            "prototypeUrl": "={{ $node['Generate Public URL'].json.publicUrl }}",
+            "deploymentTime": "={{ $node['Generate Public URL'].json.deploymentTime }}"
+          }
+        }
+      },
+      "id": "send-client-email",
+      "name": "Send Client Email",
+      "type": "n8n-nodes-base.goHighLevel",
+      "typeVersion": 1,
+      "position": [2220, 400],
+      "credentials": {
+        "goHighLevelApi": {
+          "id": "your-gohighlevel-credential-id",
+          "name": "GoHighLevel API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "pipeline",
+        "operation": "updatePipeline",
+        "contactId": "={{ $node['Create GoHighLevel Contact'].json.id }}",
+        "stageId": "prototype-delivered-stage-id",
+        "additionalFields": {
+          "notes": "Prototype delivered successfully at {{ $node['Generate Public URL'].json.deploymentTime }}\nURL: {{ $node['Generate Public URL'].json.publicUrl }}"
+        }
+      },
+      "id": "update-pipeline-status",
+      "name": "Update Pipeline Status",
+      "type": "n8n-nodes-base.goHighLevel",
+      "typeVersion": 1,
+      "position": [2440, 400],
+      "credentials": {
+        "goHighLevelApi": {
+          "id": "your-gohighlevel-credential-id",
+          "name": "GoHighLevel API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "email",
+        "operation": "send",
+        "contactId": "={{ $node['Create GoHighLevel Contact'].json.id }}",
+        "templateId": "your-error-template-id",
+        "additionalFields": {
+          "variables": {
+            "clientName": "={{ $json.clientName }}",
+            "projectName": "={{ $json.projectName }}",
+            "errorMessage": "Wireframe generation failed. Please contact support."
+          }
+        }
+      },
+      "id": "send-error-email",
+      "name": "Send Error Email",
+      "type": "n8n-nodes-base.goHighLevel",
+      "typeVersion": 1,
+      "position": [1340, 700],
+      "credentials": {
+        "goHighLevelApi": {
+          "id": "your-gohighlevel-credential-id",
+          "name": "GoHighLevel API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "executionId",
+              "value": "={{ $execution.id }}"
+            },
+            {
+              "name": "startTime",
+              "value": "={{ $execution.startedAt }}"
+            },
+            {
+              "name": "endTime",
+              "value": "={{ new Date().toISOString() }}"
+            },
+            {
+              "name": "status",
+              "value": "completed"
+            },
+            {
+              "name": "clientName",
+              "value": "={{ $json.clientName }}"
+            },
+            {
+              "name": "projectName",
+              "value": "={{ $json.projectName }}"
+            }
+          ]
+        }
+      },
+      "id": "log-execution",
+      "name": "Log Execution",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2660, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Prepare Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Data": {
+      "main": [
+        [
+          {
+            "node": "Create GoHighLevel Contact",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Google Drive Folder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate Cursor.sh Wireframe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create GoHighLevel Contact": {
+      "main": [
+        [
+          {
+            "node": "Add to Pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Pipeline": {
+      "main": [
+        [
+          {
+            "node": "Send Client Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Drive Folder": {
+      "main": [
+        [
+          {
+            "node": "Create Project Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Cursor.sh Wireframe": {
+      "main": [
+        [
+          {
+            "node": "Process Wireframe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Wireframe": {
+      "main": [
+        [
+          {
+            "node": "Check Wireframe Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Wireframe Success": {
+      "main": [
+        [
+          {
+            "node": "Create GitHub Branch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create GitHub Branch": {
+      "main": [
+        [
+          {
+            "node": "Create HTML File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create CSS File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create JS File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create HTML File": {
+      "main": [
+        [
+          {
+            "node": "Create Pull Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create CSS File": {
+      "main": [
+        [
+          {
+            "node": "Create Pull Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create JS File": {
+      "main": [
+        [
+          {
+            "node": "Create Pull Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Pull Request": {
+      "main": [
+        [
+          {
+            "node": "Generate Public URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Public URL": {
+      "main": [
+        [
+          {
+            "node": "Send Client Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Client Email": {
+      "main": [
+        [
+          {
+            "node": "Update Pipeline Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Pipeline Status": {
+      "main": [
+        [
+          {
+            "node": "Log Execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Error Email": {
+      "main": [
+        [
+          {
+            "node": "Log Execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "client-onboarding",
+      "name": "Client Onboarding"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+} 
