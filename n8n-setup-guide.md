@@ -21,14 +21,69 @@ Before importing the workflow, ensure you have:
 
 ### 2. Configure Credentials
 
-#### GoHighLevel Credentials
+#### GoHighLevel OAuth2 App Setup
 
-1. Go to **Settings** → **Credentials**
+**IMPORTANT**: Before creating credentials in n8n, you must first create an OAuth2 app in GoHighLevel.
+
+##### Step 1: Create OAuth2 App in GoHighLevel
+
+1. **Access Developer Portal**
+
+   - Visit [developers.gohighlevel.com](https://developers.gohighlevel.com)
+   - Login with your GoHighLevel account
+
+2. **Create New Application**
+
+   - Navigate to **"My Apps"** → **"Create App"**
+   - Enter your app details:
+     - **App Name**: `n8n Integration` (or your preferred name)
+     - **App Description**: `n8n workflow automation integration`
+
+3. **Configure OAuth Settings**
+
+   - Set **Distribution Type** to **"Sub-Account"**
+   - **OAuth Redirect URL**:
+     ```
+     https://oauth.n8n.cloud/oauth2/callback
+     ```
+   - **Required Scopes**: Add these scopes:
+     - `locations.readonly`
+     - `contacts.readonly`
+     - `contacts.write`
+     - `opportunities.readonly`
+     - `opportunities.write`
+     - `users.readonly`
+
+4. **Save and Get Credentials**
+   - Click **"Create App"**
+   - Copy the **Client ID** (long alphanumeric string)
+   - Copy the **Client Secret** (long alphanumeric string)
+   - **Keep these secure** - you'll need them for n8n
+
+##### Step 2: Configure n8n GoHighLevel Credentials
+
+1. Go to **Settings** → **Credentials** in n8n
 2. Click **Add Credential**
-3. Select **GoHighLevel API**
-4. Enter your GoHighLevel API key
-5. Test the connection
-6. Note the credential ID for the workflow
+3. Select **HighLevel OAuth2** (not the legacy API key option)
+4. Fill in the OAuth2 details:
+   - **Client ID**: Paste from your GoHighLevel app
+   - **Client Secret**: Paste from your GoHighLevel app
+   - **Scope**: Enter exactly:
+     ```
+     locations.readonly contacts.readonly contacts.write opportunities.readonly opportunities.write users.readonly
+     ```
+5. Click **"Connect my account"**
+6. **Authorize in GoHighLevel**:
+   - You'll be redirected to GoHighLevel
+   - Choose your location/sub-account
+   - Grant the requested permissions
+   - You'll be redirected back to n8n
+7. **Test the connection** and note the credential ID
+
+##### Requirements:
+
+- **GoHighLevel Plan**: Unlimited plan ($297/month) required for OAuth2 API access
+- **API Version**: Uses GoHighLevel API v2.0 (recommended over deprecated v1.0)
 
 #### Google Drive Credentials
 

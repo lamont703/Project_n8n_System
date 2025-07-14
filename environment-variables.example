@@ -1,0 +1,38 @@
+# n8n GoHighLevel Integration - Environment Variables Template
+# Copy this file to .env and fill in your actual values
+# NEVER commit the .env file to version control!
+
+# GoHighLevel OAuth2 Credentials (from GoHighLevel Developer Portal)
+GOHIGHLEVEL_CLIENT_ID=your_oauth2_client_id_here
+GOHIGHLEVEL_CLIENT_SECRET=your_oauth2_client_secret_here
+
+# GoHighLevel Configuration (safe to share - these are resource IDs)
+GOHIGHLEVEL_LOCATION_ID=QLyYYRoOhCg65lKW9HDX
+GOHIGHLEVEL_PIPELINE_ID=uR2CMkTiwqoUOYuf8oGR
+GOHIGHLEVEL_NEW_LEAD_STAGE_ID=6c36dbcf-5711-4759-bbb8-182527cb0758
+GOHIGHLEVEL_PROTOTYPE_STAGE_ID=84de19a4-2f96-4932-ab9c-8ddf4ba29a45
+GOHIGHLEVEL_DELIVERY_STAGE_ID=5762923f-6951-4dc9-b19e-81fee9d4675a
+
+# Cursor.sh API (if available)
+CURSOR_API_KEY=your_cursor_api_key_here
+
+# GitHub Configuration
+GITHUB_USERNAME=your_github_username
+GITHUB_REPO_NAME=client-prototypes
+GITHUB_TOKEN=your_github_personal_access_token
+
+# Google Drive Configuration
+GOOGLE_DRIVE_FOLDER_ID=your_google_drive_folder_id
+
+# n8n Configuration
+N8N_WEBHOOK_URL=your_n8n_webhook_url
+
+# Email Configuration (if using SMTP)
+SMTP_HOST=your_smtp_host
+SMTP_PORT=587
+SMTP_USER=your_email@domain.com
+SMTP_PASS=your_email_password
+
+# Production URLs
+PRODUCTION_DOMAIN=yourdomain.com
+OAUTH_REDIRECT_URL=https://oauth.n8n.cloud/oauth2/callback 
