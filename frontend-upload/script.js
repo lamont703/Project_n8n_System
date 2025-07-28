@@ -1,5 +1,5 @@
 // Assembly AI Configuration - Direct Frontend Integration
-const ASSEMBLYAI_API_KEY = '9563dac8b85846029bd3921edf0d8509'; // You'll need to replace this
+const ASSEMBLYAI_API_KEY = 'Assembly_API_Key'; // You'll need to replace this
 const N8N_WEBHOOK_URL = "https://innergcomplete.app.n8n.cloud/webhook/c0b2e4e8-c7b1-41c1-8e6e-db02f612b80d";
 
 // DOM Elements
@@ -97,7 +97,7 @@ async function handleTranscribe() {
     }
 
     // Check if API key is set
-    if (ASSEMBLYAI_API_KEY === 'YOUR_ASSEMBLYAI_API_KEY_HERE') {
+    if (ASSEMBLYAI_API_KEY === 'Assembly_API_Key') {
         showError('Please set your Assembly AI API key in the script.js file.');
         return;
     }
