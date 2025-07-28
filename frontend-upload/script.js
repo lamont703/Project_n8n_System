@@ -1,6 +1,8 @@
 // Assembly AI Configuration - Direct Frontend Integration
-const ASSEMBLYAI_API_KEY = 'ASSEMBLY_API_KEY'; // You'll need to replace this
-const N8N_WEBHOOK_URL = "https://innergcomplete.app.n8n.cloud/webhook/c0b2e4e8-c7b1-41c1-8e6e-db02f612b80d";
+// ⚠️ SECURITY: Replace with your actual API key before using
+const ASSEMBLYAI_API_KEY = 'YOUR_ASSEMBLYAI_API_KEY_HERE'; // Replace with your actual API key
+// ⚠️ SECURITY: Replace with your actual n8n webhook URL before using
+const N8N_WEBHOOK_URL = "YOUR_N8N_WEBHOOK_URL_HERE"; // Replace with your actual webhook URL
 
 // DOM Elements
 const dropZone = document.getElementById('dropZone');
@@ -83,6 +85,12 @@ async function handleFile(file) {
     if (!validation.isValid && file.size > 0) {
         console.warn('File validation failed - file might be corrupted or in an unusual format');
         // Don't block the upload, just warn
+    }
+    
+    // Additional check for video files - warn if they might not contain audio
+    if (['mp4', 'mov', 'avi', 'mkv', 'webm'].includes(fileExtension)) {
+        console.log('Video file detected - Assembly AI will extract audio for transcription');
+        updateStatus('Video file detected - audio will be extracted for transcription');
     }
     
     selectedFile = file;
@@ -183,6 +191,31 @@ async function handleTranscribe() {
         return;
     }
     
+    // Debug: Log API key info (safely)
+    console.log('🔑 Assembly AI API Key Status:', {
+        keySet: !!ASSEMBLYAI_API_KEY,
+        keyLength: ASSEMBLYAI_API_KEY.length,
+        keyStart: ASSEMBLYAI_API_KEY.substring(0, 8) + '...',
+        timestamp: new Date().toISOString()
+    });
+    
+    // Debug: Additional file analysis before upload
+    console.log('Pre-upload file analysis:', {
+        fileName: selectedFile.name,
+        fileType: selectedFile.type,
+        fileSize: selectedFile.size,
+        lastModified: new Date(selectedFile.lastModified).toISOString(),
+        isVideo: selectedFile.type.startsWith('video/'),
+        isAudio: selectedFile.type.startsWith('audio/')
+    });
+    
+    // Try to detect potential codec issues
+    if (selectedFile.type === 'video/mp4') {
+        console.log('🔍 MP4 Video detected - checking for common codec compatibility issues...');
+        console.log('💡 If transcription fails with "no audio" error, the video likely uses an unsupported audio codec');
+        console.log('🎯 Common solutions: Convert to MP3 audio or use standard H.264/AAC encoding');
+    }
+    
     // Update UI
     transcribeBtn.disabled = true;
     transcribeBtn.textContent = 'Transcribing...';
@@ -229,14 +262,56 @@ async function handleTranscribe() {
         }
         
         const formData = new FormData();
-        formData.append('audio', fileToUpload, fileToUpload.name);
         
-        console.log('Uploading file:', fileToUpload.name, 'Size:', formatFileSize(fileToUpload.size), 'Original Type:', selectedFile.type, 'Upload Type:', fileToUpload.type);
+        // Ensure proper MIME type is preserved
+        const uploadFileExtension = fileToUpload.name.toLowerCase().split('.').pop();
+        let mimeType = fileToUpload.type;
+        
+        // Fix common MIME type issues
+        if (!mimeType || mimeType === 'application/octet-stream') {
+            const mimeTypes = {
+                'mp4': 'video/mp4',
+                'mov': 'video/quicktime',
+                'avi': 'video/x-msvideo',
+                'mkv': 'video/x-matroska',
+                'webm': 'video/webm',
+                'mp3': 'audio/mpeg',
+                'wav': 'audio/wav',
+                'flac': 'audio/flac',
+                'm4a': 'audio/mp4',
+                'aac': 'audio/aac',
+                'ogg': 'audio/ogg'
+            };
+            mimeType = mimeTypes[uploadFileExtension] || 'application/octet-stream';
+        }
+        
+        // Create a new File object with correct MIME type
+        const correctedFile = new File([fileToUpload], fileToUpload.name, { type: mimeType });
+        formData.append('audio', correctedFile, correctedFile.name);
+        
+        console.log('Uploading file:', correctedFile.name, 'Size:', formatFileSize(correctedFile.size), 'Original Type:', selectedFile.type, 'Upload Type:', correctedFile.type, 'Corrected MIME:', mimeType);
+        
+        // Log additional debug info for troubleshooting
+        console.log('File upload debug info:', {
+            originalFile: {
+                name: selectedFile.name,
+                type: selectedFile.type,
+                size: selectedFile.size
+            },
+            correctedFile: {
+                name: correctedFile.name,
+                type: correctedFile.type,
+                size: correctedFile.size
+            },
+            extension: uploadFileExtension,
+            detectedMimeType: mimeType
+        });
         
         const uploadResponse = await fetch('https://api.assemblyai.com/v2/upload', {
             method: 'POST',
             headers: {
-                'Authorization': ASSEMBLYAI_API_KEY
+                'Authorization': ASSEMBLYAI_API_KEY,
+                'Content-Type': undefined  // Let the browser set this with boundary for FormData
             },
             body: formData
         });
@@ -250,21 +325,28 @@ async function handleTranscribe() {
         const uploadData = await uploadResponse.json();
         const audioUrl = uploadData.upload_url;
         
+        // Debug: Log upload response details
+        console.log('Assembly AI upload response:', {
+            status: uploadResponse.status,
+            headers: Object.fromEntries(uploadResponse.headers.entries()),
+            uploadData: uploadData,
+            audioUrl: audioUrl
+        });
+        
         updateProgress(30);
         updateStatus('File uploaded. Starting transcription...');
         
-        // Step 2: Start transcription
+        // Step 2: Start transcription - using minimal settings to avoid codec issues
         const transcriptRequest = {
             audio_url: audioUrl,
-            speaker_labels: true,
             punctuate: true,
-            format_text: true,
-            language_detection: true,
-            disfluencies: false,
-            dual_channel: false
+            format_text: true
+            // Removing advanced options that might cause codec issues:
+            // speaker_labels, language_detection, dual_channel
         };
         
         console.log('Starting transcription with audio URL:', audioUrl);
+        console.log('Transcription request payload:', transcriptRequest);
         
         const transcriptResponse = await fetch('https://api.assemblyai.com/v2/transcript', {
             method: 'POST',
@@ -283,6 +365,13 @@ async function handleTranscribe() {
         
         const transcriptData = await transcriptResponse.json();
         const transcriptId = transcriptData.id;
+        
+        // Debug: Log initial transcription response
+        console.log('Initial transcription response:', {
+            status: transcriptResponse.status,
+            transcriptData: transcriptData,
+            transcriptId: transcriptId
+        });
         
         updateProgress(40);
         updateStatus('Transcription in progress...');
@@ -314,10 +403,43 @@ async function handleTranscribe() {
             } else if (transcript.status === 'error') {
                 console.error('Assembly AI transcription error details:', transcript);
                 
+                // Debug: Log all available error information
+                console.log('Full error transcript object:', JSON.stringify(transcript, null, 2));
+                
+                // Check if we have additional metadata about the file
+                if (transcript.audio_duration !== undefined) {
+                    console.log('Audio duration detected by Assembly AI:', transcript.audio_duration);
+                }
+                if (transcript.words) {
+                    console.log('Words array length:', transcript.words.length);
+                }
+                
                 // Provide more specific error messages
                 let errorMessage = transcript.error || 'Unknown transcription error';
                 if (errorMessage.includes('Transcoding failed') && errorMessage.includes('does not appear to contain audio')) {
                     errorMessage += '\n\nPossible solutions:\n• Make sure the file contains actual audio/video content\n• Try converting the file to a standard format (MP3, MP4, WAV)\n• Check if the file is corrupted\n• Ensure the file isn\'t just silence or very quiet audio';
+                }
+                
+                // Check if this might be a codec issue we can retry
+                if (errorMessage.includes('does not appear to contain audio') && transcript.audio_duration === 0) {
+                    console.log('🔄 Audio duration is 0 - this might be a codec compatibility issue');
+                    console.log('💡 Current file type:', selectedFile.type);
+                    console.log('💡 File extension:', selectedFile.name.split('.').pop());
+                    
+                    // Check what type of file failed
+                    const isM4A = selectedFile.name.toLowerCase().endsWith('.m4a');
+                    const isMP4 = selectedFile.name.toLowerCase().endsWith('.mp4');
+                    
+                    if (isM4A) {
+                        console.log('🚨 M4A file failed - Assembly AI may not support this M4A variant');
+                        errorMessage += '\n\n🔧 M4A CODEC ISSUE:\nThis M4A file cannot be processed by Assembly AI.\n\n✅ BEST SOLUTION - Convert to MP3:\n• Use online converter: CloudConvert, OnlineConvert\n• MP3 is the most compatible format\n• Or try WAV for highest compatibility';
+                    } else if (isMP4) {
+                        errorMessage += '\n\n🔧 VIDEO CODEC ISSUE:\nYour video has audio, but Assembly AI cannot process the audio codec.\n\n✅ Quick fixes:\n• Convert to MP3: Extract audio only\n• Convert to WAV: More compatible format\n• Try a different video file';
+                    } else {
+                        errorMessage += '\n\n🔧 CODEC COMPATIBILITY ISSUE:\nAssembly AI cannot process this audio format.\n\n✅ Try these formats:\n• MP3 (most compatible)\n• WAV (highest compatibility)\n• Standard MP4 with AAC audio';
+                    }
+                    
+                    console.log('🎯 RECOMMENDATION: Convert to MP3 for best compatibility');
                 }
                 
                 throw new Error(`Assembly AI transcription error: ${errorMessage}`);

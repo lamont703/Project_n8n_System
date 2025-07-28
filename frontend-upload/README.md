@@ -13,19 +13,40 @@ A standalone web application that uses Assembly AI for audio and video transcrip
 
 ## Setup
 
+### 🔐 Secure Configuration (Recommended)
+
 1. **Get Assembly AI API Key**:
+
    - Go to [Assembly AI](https://www.assemblyai.com/)
    - Sign up for a free account
    - Copy your API key from the dashboard
 
-2. **Configure API Key**:
-   - Open `script.js`
-   - Replace `'9563dac8b85846029bd3921edf0d8509'` with your API key
-   - Update the `N8N_WEBHOOK_URL` if needed
+2. **Configure API Keys Securely**:
 
-3. **Deploy**:
+   ```bash
+   # Copy the configuration template
+   cp config.example.js script-local.js
+
+   # Edit script-local.js with your actual keys
+   # This file is in .gitignore and won't be committed
+   ```
+
+3. **Update script.js**:
+
+   - Replace `'YOUR_ASSEMBLYAI_API_KEY_HERE'` with your API key
+   - Replace `'YOUR_N8N_WEBHOOK_URL_HERE'` with your webhook URL
+   - **OR** use the script-local.js approach for development
+
+4. **Deploy**:
    - Upload files to any web hosting service
    - Or serve locally with a simple HTTP server
+   - **⚠️ For production**: Use environment variables or server-side proxy
+
+### ⚡ Quick Setup (Development Only)
+
+1. Open `script.js`
+2. Replace placeholders with your actual credentials
+3. **🚨 WARNING**: Never commit real API keys to version control!
 
 ## Files
 
@@ -57,6 +78,7 @@ A standalone web application that uses Assembly AI for audio and video transcrip
 ## Browser Compatibility
 
 Works in all modern browsers that support:
+
 - Fetch API
 - File API
 - FormData

@@ -15,6 +15,17 @@
 *key*.txt
 *key*.json
 
+# JavaScript files with API keys (protect local versions)
+*-config.js
+*-keys.js
+config-local.js
+keys-local.js
+script-local.js
+
+# Assembly AI specific
+assemblyai-key.txt
+assemblyai-config.js
+
 # n8n specific files that may contain credentials
 n8n-data/
 workflows-backup/

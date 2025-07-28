@@ -80,16 +80,46 @@ users.readonly
 ❌ ghl-config-reference.md (only examples/placeholders)
 ❌ client-onboarding-workflow.json (use credential references)
 ❌ test-ghl-api.js (prompts for input, never hardcoded)
+❌ frontend-upload/script.js (use placeholders, not real API keys)
 ```
+
+### 6. Frontend API Key Security
+
+**For the frontend audio transcriber app:**
+
+- ✅ **Development**: Use `script-local.js` for real API keys (gitignored)
+- ✅ **Template**: Use `config.example.js` as a template
+- ✅ **Placeholders**: Keep `script.js` with placeholder values only
+- ❌ **Never commit**: Real Assembly AI API keys or n8n webhook URLs
+
+**Frontend API Key Best Practices:**
+
+```bash
+# Copy template and add real credentials (this file is gitignored)
+cp frontend-upload/config.example.js frontend-upload/script-local.js
+
+# Edit script-local.js with your actual API keys
+# Use script-local.js for development
+# Keep script.js with placeholders for version control
+```
+
+**⚠️ Production Warning**: Frontend API keys are visible to users. For production:
+
+- Use server-side proxy for API calls
+- Implement rate limiting and authentication
+- Consider backend-only transcription processing
 
 ## 🔍 Security Checklist Before Git Push
 
 - [ ] No real API keys in any files
 - [ ] No OAuth2 Client IDs/Secrets in files
+- [ ] No Assembly AI API keys in frontend JavaScript files
+- [ ] No n8n webhook URLs in frontend JavaScript files
 - [ ] All `.env` files are in `.gitignore`
 - [ ] Only placeholder/example values in documentation
 - [ ] Workflow files use credential references, not hardcoded values
 - [ ] Personal information removed (emails, phone numbers)
+- [ ] Frontend apps use placeholder values in committed code
 
 ## 🚨 If Credentials Are Compromised
 
