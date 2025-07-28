@@ -1,5 +1,5 @@
 // Assembly AI Configuration - Direct Frontend Integration
-const ASSEMBLYAI_API_KEY = 'f6c448f8f3df4dda8ec94f128e45fa6d'; // You'll need to replace this
+const ASSEMBLYAI_API_KEY = 'ASSEMBLY_API_KEY'; // You'll need to replace this
 const N8N_WEBHOOK_URL = "https://innergcomplete.app.n8n.cloud/webhook/c0b2e4e8-c7b1-41c1-8e6e-db02f612b80d";
 
 // DOM Elements
