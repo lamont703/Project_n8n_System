@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Transcriber</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Audio & Video Transcriber</h1>
+        <p>Upload an audio or video file to get a transcription using Assembly AI directly from your browser.</p>
+        
+        <!-- File Upload Area -->
+        <div id="dropZone" class="drop-zone">
+            <div>
+                <span style="font-size: 48px;">📁</span>
+                <h3>Drag & Drop your file here</h3>
+                <p>or click to browse</p>
+                <p style="color: #666; font-size: 14px;">Maximum file size: 512MB</p>
+            </div>
+        </div>
+        <input type="file" id="fileInput" accept="audio/*,video/*" style="display: none;">
+        
+        <!-- Transcribe Button -->
+        <button id="transcribeBtn" disabled>Select a file to start</button>
+        
+        <!-- Progress Container -->
+        <div id="progressContainer" style="display: none;">
+            <div class="progress-bar">
+                <div id="progressBar"></div>
+            </div>
+            <p id="statusText">Processing...</p>
+        </div>
+        
+        <!-- Results Container -->
+        <div id="result" style="display: none;">
+            <h2>Transcription Result:</h2>
+            <div class="transcript-container">
+                <div id="transcriptText" class="transcript-text"></div>
+                <button id="copyBtn">Copy to Clipboard</button>
+            </div>
+        </div>
+        
+        <!-- Documentation -->
+        <div class="documentation">
+            <h2>How it works</h2>
+            <p>This application uses Assembly AI's powerful Speech-to-Text API directly from your browser - no backend server needed! Files are uploaded directly to Assembly AI, transcribed, and the results are sent to your n8n webhook.</p>
+            <p>Simply drag and drop your file or click to browse. Assembly AI automatically handles all audio and video formats, extracts audio from video files, and provides high-quality transcriptions with punctuation and formatting.</p>
+            
+            <h3>Key Features</h3>
+            <ul>
+                <li><strong>Large File Support:</strong> Up to 512MB file size (full Assembly AI capacity)</li>
+                <li><strong>No Server Needed:</strong> Direct browser-to-Assembly AI integration</li>
+                <li><strong>Auto Format Detection:</strong> No need to specify audio format</li>
+                <li><strong>Video Support:</strong> Automatically extracts audio from video files</li>
+                <li><strong>High Accuracy:</strong> Industry-leading transcription quality</li>
+                <li><strong>Fast Processing:</strong> Direct API calls, no server bottlenecks</li>
+            </ul>
+            
+            <h3>Supported Formats</h3>
+            <p><strong>Audio:</strong> MP3, WAV, FLAC, M4A, AAC, OGG, OPUS, and more</p>
+            <p><strong>Video:</strong> MP4, MOV, AVI, MKV, WebM, FLV, 3GP, and more</p>
+            <p>Assembly AI automatically processes any audio or video format and extracts the best possible transcription.</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
