@@ -149,3 +149,23 @@ CUSTOM_FIELDS_ENDPOINT="/custom-fields/"
 **Last Updated**: API configuration verified and tested  
 **Source**: GoHighLevel API test results  
 **Status**: ✅ Production ready
+
+---
+
+## ⚠️ Security Note
+
+**NEVER commit actual OAuth2 credentials to version control!**
+
+For reference, your OAuth2 credentials should look like:
+
+```bash
+# Example format only - use your actual credentials from GoHighLevel Developer Portal
+clientID=abc123def456...
+clientSecret=xyz789uvw012...
+```
+
+Store actual credentials securely in:
+
+- n8n credential manager
+- Environment variables
+- Secure password manager

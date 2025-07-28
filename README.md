@@ -67,11 +67,61 @@ This interactive HTML prototype demonstrates an automated client onboarding work
 ### Files Structure
 
 ```
-├── index.html          # Main HTML structure
-├── styles.css          # CSS styling and animations
-├── script.js           # JavaScript functionality
-└── README.md          # This documentation
+├── index.html                          # Main HTML structure
+├── styles.css                          # CSS styling and animations
+├── script.js                           # JavaScript functionality
+├── client-onboarding-workflow.json     # n8n workflow configuration
+├── oauth2-setup-guide.md               # OAuth2 app creation guide
+├── n8n-setup-guide.md                  # Complete n8n setup instructions
+├── ghl-config-reference.md             # GoHighLevel configuration details
+├── test-ghl-api.js                     # GoHighLevel API testing script
+├── environment-variables.example       # Template for environment variables
+├── SECURITY.md                         # Security guidelines and best practices
+├── .gitignore                          # Prevents credential leaks
+└── README.md                           # This documentation
 ```
+
+### Prerequisites for n8n Integration
+
+Before implementing the automated workflow, you need to set up OAuth2 authentication:
+
+#### GoHighLevel OAuth2 App Setup
+
+**REQUIRED**: Create an OAuth2 application in GoHighLevel Developer Portal
+
+1. **Access Developer Portal**
+
+   - Visit [developers.gohighlevel.com](https://developers.gohighlevel.com)
+   - Login with your GoHighLevel account
+
+2. **Create New Application**
+
+   - Navigate to **"My Apps"** → **"Create App"**
+   - App Name: `n8n Client Onboarding Integration`
+   - Set Distribution Type to **"Sub-Account"**
+
+3. **Configure OAuth Settings**
+
+   - OAuth Redirect URL: `https://oauth.n8n.cloud/oauth2/callback`
+   - Required Scopes:
+     ```
+     locations.readonly contacts.readonly contacts.write
+     opportunities.readonly opportunities.write users.readonly
+     ```
+
+4. **Get Credentials**
+   - Copy Client ID and Client Secret
+   - Use these in n8n credential configuration
+
+**Requirements:**
+
+- GoHighLevel Unlimited plan ($297/month) for OAuth2 API access
+- n8n Cloud or self-hosted instance
+- Access to GoHighLevel Developer Portal
+
+📖 **Quick OAuth2 Setup**: See `oauth2-setup-guide.md` for step-by-step OAuth2 configuration
+📖 **Complete Setup Guide**: See `n8n-setup-guide.md` for full n8n workflow configuration
+🔐 **Security Guidelines**: See `SECURITY.md` for credential management and security best practices
 
 ### Key Technologies
 

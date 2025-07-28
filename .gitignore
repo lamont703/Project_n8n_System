@@ -1,0 +1,84 @@
+# n8n Project Security - Prevent Credential Leaks
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+
+# OAuth2 & API Credentials
+*secret*
+*credential*
+*oauth*
+*token*
+*key*.txt
+*key*.json
+
+# n8n specific files that may contain credentials
+n8n-data/
+workflows-backup/
+credentials-backup/
+
+# GoHighLevel API Keys
+ghl-api-key.txt
+ghl-credentials.json
+
+# Client-specific configuration files
+client-*.json
+production-*.json
+
+# Backup files that may contain sensitive data
+*.backup
+*.bak
+*-backup.*
+
+# Logs that may contain sensitive information
+logs/
+*.log
+error.log
+debug.log
+
+# IDE and Editor files
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Archives that might contain sensitive data
+*.zip
+*.tar.gz
+*.rar
+
+# Database files (if any)
+*.db
+*.sqlite
+*.sqlite3
+
+# Testing files that might contain real credentials
+test-credentials.json
+test-api-keys.txt
+real-*.json 
