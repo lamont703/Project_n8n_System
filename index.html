@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio to Wireframe Agent</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Audio to Wireframe Agent</h1>
+        <p>Upload an audio file, and the agent will generate a transcript, a wireframe, a GitHub repo, and a live webpage.</p>
+
+        <div class="upload-section">
+            <div id="dropZone" class="drop-zone">
+                <p>Drag & Drop Audio File Here</p>
+                <p>or</p>
+                <button id="browseBtn" class="browse-btn">Browse Files</button>
+                <input type="file" id="fileInput" accept="audio/*" hidden>
+            </div>
+            <div id="fileInfo" class="file-info">
+                <p id="fileName"></p>
+                <p id="fileSize"></p>
+            </div>
+        </div>
+
+        <button id="transcribeBtn" class="transcribe-btn" disabled>Create Wireframe</button>
+
+        <div id="progressContainer" class="progress-container" style="display: none;">
+            <p id="statusText">Starting...</p>
+            <div class="progress-bar">
+                <div id="progressBar" class="progress-bar-inner"></div>
+            </div>
+        </div>
+
+        <div id="result" class="result" style="display: none;">
+            <h2>Results</h2>
+            <div id="error" class="error-message" style="display: none;"></div>
+            <div class="result-links">
+                <a id="repoLink" href="#" target="_blank" class="result-link">GitHub Repository</a>
+                <a id="pagesLink" href="#" target="_blank" class="result-link">Live Wireframe Site</a>
+            </div>
+            <div class="result-box">
+                <pre id="transcriptText"></pre>
+            </div>
+            <button id="copyBtn" class="copy-btn">Copy Full Output</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
